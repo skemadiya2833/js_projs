@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problem 2</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <div class="outer-container">
+        <div class="search-container">
+            <div>
+                <input type="text" placeholder="Country Name or Code" id="searchQuery">
+                <button onclick="search()"><i class="fa fa-search"></i></button>
+            </div>
+        </div>
+        <div id="card-container">
+        </div>
+    </div>
+    <div id="neighbour-cards">
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", async (event) => {
+            const response = await fetch('https://restcountries.com/v3.1/name/india?fullText=true');
+            const data = await response.json();
+            const mainDiv = document.getElementById('card-container');
+            mainDiv.appendChild(createCountryCard(data[0]));
+        });
+
+        async function search() {
+            const query = document.getElementById('searchQuery').value.trim();
+            if (!query || query.length === 0) {
+                alert("Please Enter the query");
+                return;
+            }
+            var borders = [];
+            try {
+                let response = [];
+
+                if (query.length <= 3)
+                    response = await fetch(`https://restcountries.com/v3.1/alpha/${query}`);
+                else
+                    response = await fetch(`https://restcountries.com/v3.1/name/${query}?fullText=true`);
+
+                if (response.status === 404) {
+                    alert("No country Found");
+                    return;
+                }
+                const data = await response.json();
+                borders = data[0]['borders'];
+                const mainDiv = document.getElementById('card-container');
+                mainDiv.innerHTML = '';
+                if(!borders)
+                    return ;
+                mainDiv.appendChild(createCountryCard(data[0]));
+            } catch (err) {
+                console.log(err);
+            }
+            try {
+                let promises = [];
+                for (let countryCode of borders) {
+                    promises.push(await fetch(`https://restcountries.com/v3.1/alpha/${countryCode}`).then((resp) => { return resp.json() }));
+                }
+                const responseAll = await Promise.allSettled(promises);
+                const neighborcard = document.getElementById('neighbour-cards');
+                neighborcard.innerHTML = '';
+                for (let response of responseAll) {
+                    const data = response['value'][0];
+                    neighborcard.appendChild(createCountryCard(data));
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        function createCountryCard(countryObj) {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            const flag = document.createElement('img');
+            flag.src = countryObj['flags']['png'];
+            flag.alt = countryObj['flags']['alt'];
+            const infoDiv = document.createElement('div');
+            infoDiv.classList.add('container');
+            const countryTitle = document.createElement('h2');
+            countryTitle.innerHTML = countryObj['name']['common'];
+            const description = document.createElement('p');
+            const text = "Population: " + countryObj['population'] + "<br>" +
+                "Capital: " + countryObj['capital'] + "<br>" +
+                "Region: " + countryObj['region'];
+            description.innerHTML = text;
+            card.appendChild(flag);
+            infoDiv.appendChild(countryTitle);
+            infoDiv.appendChild(description);
+            card.append(infoDiv);
+            return card ;
+        }
+    </script>
+</body>
+
+</html>

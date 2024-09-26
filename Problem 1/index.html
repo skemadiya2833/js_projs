@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Assignment 3</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <section class="container">
+        <header>Login Form</header>
+        <form class="form">
+            <div class="input-box">
+                <label>Email</label>
+                <input id="email" type="email" placeholder="Enter registered email" required />
+            </div>
+            <div class="input-box">
+                <label>Password</label>
+                <input id="password" type="password" placeholder="Enter Password" required />
+            </div>
+            <div class="info">
+                <p>Don't have an account? <a href="./register.html">Register</a></p>
+            </div>
+            <button id="submit">Login</button>
+        </form>
+    </section>
+    <script>
+        document.getElementById("submit").addEventListener("click", function (event) {
+            event.preventDefault();
+            login();
+        });
+        function login() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const list = JSON.parse(localStorage.getItem('users'));
+            if(!list){
+                alert('No users registered. Please Register');
+                location.href = "./register.html";
+                return ;
+            }
+            for(let record of list){
+                if(email === record['email'] && password === record['password']){
+                    let loggedInUsers = JSON.parse(sessionStorage.getItem('loggedInUsers')) || [];
+                    loggedInUsers.push(email);
+                    sessionStorage.setItem('loggedInUsers', JSON.stringify(loggedInUsers));
+                    alert('Welcome '+record['fullName']);
+                    location.href = "./home.html";
+                    return ;
+                } 
+            }
+            alert('Invalid Credentials!');
+        }
+    </script>
+</body>
+
+</html>

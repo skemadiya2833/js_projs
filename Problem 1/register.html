@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Assignment 3</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <section class="container">
+        <header>Registration Form</header>
+        <form class="form">
+            <div class="input-box">
+                <label>Full Name</label>
+                <input id="name" type="text" placeholder="Enter full name" required />
+            </div>
+            <div class="input-box">
+                <label>Email Address</label>
+                <input id="email" type="email" placeholder="Enter email address" required />
+            </div>
+            <div class="input-box">
+                <label>Password</label>
+                <input id="password" type="password" placeholder="Set a Password" required />
+            </div>
+            <div class="info">
+                <p>Already have an account? <a href="./index.html">Login</a></p>
+            </div>
+            <button id="submit">Submit</button>
+        </form>
+    </section>
+    <script>
+        document.getElementById("submit").addEventListener("click", function (event) {
+            event.preventDefault();
+            register();
+        });
+        function register() {
+            const fullName = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const list = JSON.parse(localStorage.getItem('users')) || [];
+            list.push({ fullName: fullName, email: email, password: password });
+            localStorage.setItem('users', JSON.stringify(list));
+            location.href = "./";
+        }
+    </script>
+</body>
+
+</html>

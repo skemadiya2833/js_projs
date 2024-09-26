@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        .loggedInUsers {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .loggedInUsers td,
+        .loggedInUsers th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .loggedInUsers tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .loggedInUsers tr:hover {
+            background-color: #ddd;
+        }
+
+        .loggedInUsers th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #04AA6D;
+            color: white;
+        }
+
+        .tables {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align: center;">Logged in users</h1>
+    <div class="tables">
+        <table class="loggedInUsers" id="loginTable">
+            <tr>
+                <th>Login Email</th>
+            </tr>
+        </table>
+        <table class="loggedInUsers" id="userTable">
+            <tr>
+                <th>User Email</th>
+                <th>Full Name</th>
+            </tr>
+        </table>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", (event) => {
+            const loggedInUsers = JSON.parse(sessionStorage.getItem('loggedInUsers')) || []; ;
+            const allUsers = JSON.parse(localStorage.getItem('users')) || [];
+            const logInTable = document.getElementById('loginTable');
+            for(let user of loggedInUsers){
+                let row = logInTable.insertRow(-1);
+                let c = row.insertCell(0);
+                c.innerText = user ;
+            }
+            const usersTable = document.getElementById('userTable');
+            for(let user of allUsers){
+                let row = usersTable.insertRow(-1);
+                let c1 = row.insertCell(0);
+                let c2 = row.insertCell(1);
+                c1.innerText = user['email'];
+                c2.innerText = user['fullName'];
+            }
+        });
+    </script>
+</body>
+
+</html>
